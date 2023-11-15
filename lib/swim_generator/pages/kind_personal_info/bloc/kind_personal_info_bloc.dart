@@ -16,8 +16,6 @@ class KindPersonalInfoBloc
 
   KindPersonalInfoBloc({required this.userRepository})
       : super(const KindPersonalInfoState()) {
-
-    on<Initialize>(_onInitialize);
     on<FirstNameChanged>(_onFirstNameChanged);
     on<FirstNameUnfocused>(_onFirstNameUnfocused);
     on<LastNameChanged>(_onLastNameChanged);
@@ -25,23 +23,8 @@ class KindPersonalInfoBloc
     on<FormSubmitted>(_onFormSubmitted);
   }
 
-  Future<void> _onInitialize(
-    Initialize event,
-    Emitter<KindPersonalInfoState> emit,
-  ) async {
-    try {
-      final user = await userRepository.getUser();
-      emit(state.copyWith(
-        firstName: FirstName.dirty(user!.kidsPersonalInfo.firstName),
-        lastName: LastName.dirty(user.kidsPersonalInfo.lastName),
-      ));
-    } catch (_) {}
-  }
-
-  void _onFirstNameChanged(
-    FirstNameChanged event,
-    Emitter<KindPersonalInfoState> emit,
-  ) {
+  void _onFirstNameChanged(FirstNameChanged event,
+      Emitter<KindPersonalInfoState> emit,) {
     final firstName = FirstName.dirty(event.firstName);
     emit(
       state.copyWith(
@@ -51,10 +34,8 @@ class KindPersonalInfoBloc
     );
   }
 
-  void _onFirstNameUnfocused(
-    FirstNameUnfocused event,
-    Emitter<KindPersonalInfoState> emit,
-  ) {
+  void _onFirstNameUnfocused(FirstNameUnfocused event,
+      Emitter<KindPersonalInfoState> emit,) {
     final firstName = FirstName.dirty(state.firstName.value);
     emit(state.copyWith(
       firstName: firstName,
@@ -62,10 +43,8 @@ class KindPersonalInfoBloc
     ));
   }
 
-  void _onLastNameChanged(
-    LastNameChanged event,
-    Emitter<KindPersonalInfoState> emit,
-  ) {
+  void _onLastNameChanged(LastNameChanged event,
+      Emitter<KindPersonalInfoState> emit,) {
     final lastName = LastName.dirty(event.lastName);
     emit(
       state.copyWith(
@@ -75,10 +54,8 @@ class KindPersonalInfoBloc
     );
   }
 
-  void _onLastNameUnfocused(
-    LastNameUnfocused event,
-    Emitter<KindPersonalInfoState> emit,
-  ) {
+  void _onLastNameUnfocused(LastNameUnfocused event,
+      Emitter<KindPersonalInfoState> emit,) {
     final lastName = LastName.dirty(state.lastName.value);
     emit(state.copyWith(
       lastName: lastName,
@@ -86,10 +63,8 @@ class KindPersonalInfoBloc
     ));
   }
 
-  void _onFormSubmitted(
-    FormSubmitted event,
-    Emitter<KindPersonalInfoState> emit,
-  ) async {
+  void _onFormSubmitted(FormSubmitted event,
+      Emitter<KindPersonalInfoState> emit,) async {
     final firstName = FirstName.dirty(state.firstName.value);
     final lastName = LastName.dirty(state.lastName.value);
     emit(
@@ -101,15 +76,11 @@ class KindPersonalInfoBloc
     );
     if (state.isValid) {
       emit(state.copyWith(submissionStatus: FormzSubmissionStatus.inProgress));
-      try {
-        await userRepository.updateKidsPersonalInfo(
-          firstName: state.firstName.value,
-          lastName: state.lastName.value,
-        );
-        emit(state.copyWith(submissionStatus: FormzSubmissionStatus.success));
-      } catch (_) {
-        emit(state.copyWith(submissionStatus: FormzSubmissionStatus.failure));
-      }
+      await userRepository.updateKidsPersonalInfo(
+        firstName: state.firstName.value,
+        lastName: state.lastName.value,
+      );
+      emit(state.copyWith(submissionStatus: FormzSubmissionStatus.success));
     }
   }
 }

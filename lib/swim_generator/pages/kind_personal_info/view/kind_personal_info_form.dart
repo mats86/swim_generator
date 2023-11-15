@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:user_repository/user_repository.dart';
 import '../../../cubit/swim_generator_cubit.dart';
 
 import '../bloc/kind_personal_info_bloc.dart';
@@ -17,11 +18,12 @@ class _KindPersonalInfoForm extends State<KindPersonalInfoForm> {
   final TextEditingController _lastNameController = TextEditingController();
   final FocusNode _firstNameFocusNod = FocusNode();
   final FocusNode _lastNameFocusNod = FocusNode();
+  late Future<User?> _userFuture;
 
   @override
   void initState() {
     super.initState();
-    // context.read<KindPersonalInfoBloc>().add(Initialize());
+    _userFuture = context.read<KindPersonalInfoBloc>().userRepository.getUser();
     _firstNameFocusNod.addListener(() {
       if (!_firstNameFocusNod.hasFocus) {
         context.read<KindPersonalInfoBloc>().add(FirstNameUnfocused());
@@ -37,6 +39,7 @@ class _KindPersonalInfoForm extends State<KindPersonalInfoForm> {
 
   @override
   void dispose() {
+    _firstNameController.dispose();
     _lastNameController.dispose();
     _firstNameFocusNod.dispose();
     _lastNameFocusNod.dispose();
@@ -45,49 +48,75 @@ class _KindPersonalInfoForm extends State<KindPersonalInfoForm> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<KindPersonalInfoBloc, KindPersonalInfoState>(
-      listener: (context, state) {
-        if (state.submissionStatus.isFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(content: Text('Something went wrong!')),
-            );
-        }
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          _FirstNameInput(
-            focusNode: _firstNameFocusNod,
-          ),
-          _LastNameInput(
-            controller: _lastNameController,
-            focusNode: _lastNameFocusNod,
-          ),
-          const SizedBox(
-            height: 16.0,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(child: _CancelButton()),
-              const SizedBox(
-                width: 8.0,
-              ),
-              Expanded(child: _SubmitButton())
-            ],
-          )
-        ],
-      ),
-    );
+    return FutureBuilder<User?>(
+        future: _userFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.data!.kidsPersonalInfo.firstName != '') {
+            _firstNameController.text =
+                snapshot.data!.kidsPersonalInfo.firstName;
+            context
+                .read<KindPersonalInfoBloc>()
+                .add(FirstNameChanged(snapshot.data!.kidsPersonalInfo.firstName));
+          }
+          if (snapshot.data!.kidsPersonalInfo.lastName != '') {
+            _lastNameController.text = snapshot.data!.kidsPersonalInfo.lastName;
+            context
+                .read<KindPersonalInfoBloc>()
+                .add(LastNameChanged(snapshot.data!.kidsPersonalInfo.lastName));
+          }
+
+          return BlocListener<KindPersonalInfoBloc, KindPersonalInfoState>(
+            listener: (context, state) {
+              if (state.submissionStatus.isFailure) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(content: Text('Something went wrong!')),
+                  );
+              }
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _FirstNameInput(
+                  controller: _firstNameController,
+                  focusNode: _firstNameFocusNod,
+                ),
+                _LastNameInput(
+                  controller: _lastNameController,
+                  focusNode: _lastNameFocusNod,
+                ),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(child: _CancelButton()),
+                    const SizedBox(
+                      width: 8.0,
+                    ),
+                    Expanded(child: _SubmitButton())
+                  ],
+                )
+              ],
+            ),
+          );
+        });
   }
 }
 
 class _FirstNameInput extends StatelessWidget {
+  final TextEditingController controller;
   final FocusNode focusNode;
 
-  const _FirstNameInput({required this.focusNode});
+  const _FirstNameInput({
+    required this.controller,
+    required this.focusNode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +124,7 @@ class _FirstNameInput extends StatelessWidget {
       buildWhen: (previous, current) => previous.firstName != current.firstName,
       builder: (context, state) {
         return TextField(
+          controller: controller,
           focusNode: focusNode,
           key: const Key('KindPersonalInfoForm_firstNameInput_textField'),
           onChanged: (firstName) => context
@@ -130,8 +160,8 @@ class _FirstNameInput extends StatelessWidget {
 }
 
 class _LastNameInput extends StatelessWidget {
-  final FocusNode focusNode;
   final TextEditingController controller;
+  final FocusNode focusNode;
 
   const _LastNameInput({
     required this.controller,
@@ -171,6 +201,7 @@ class _LastNameInput extends StatelessWidget {
                   ? state.lastName.error?.message
                   : null,
             ),
+            controller: controller,
           );
         });
   }
@@ -224,7 +255,7 @@ class _CancelButton extends StatelessWidget {
                       'kindPersonalInfoForm_cancelButton_elevatedButton'),
                   onPressed: () =>
                       context.read<SwimGeneratorCubit>().stepCancelled(),
-                  child: const Text('Abrechen'),
+                  child: const Text('Weiter'),
                 );
         });
   }

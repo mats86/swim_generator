@@ -14,7 +14,7 @@ class FirstNameChanged extends KindPersonalInfoEvent {
   @override
   List<Object> get props => [firstName];
 }
-final class Initialize extends KindPersonalInfoEvent {}
+
 final class FirstNameUnfocused extends KindPersonalInfoEvent {}
 
 class LastNameChanged extends KindPersonalInfoEvent {
