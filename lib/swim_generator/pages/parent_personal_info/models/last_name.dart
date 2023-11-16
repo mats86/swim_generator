@@ -1,9 +1,8 @@
-
 import 'package:formz/formz.dart';
 
 enum LastNameValidationError {
-  required('Nachname can\'t be empty'),
-  invalid('Nachname you have entered is not valid.');
+  required('Nachname darf nicht leer sein.'),
+  invalid('Der eingegebene Nachname ist ungültig.');
 
   final String message;
   const LastNameValidationError(this.message);
@@ -11,17 +10,18 @@ enum LastNameValidationError {
 
 class LastName extends FormzInput<String, LastNameValidationError> {
   const LastName.pure() : super.pure('');
-  const LastName.dirty([String value = '']) : super.dirty(value);
+  const LastName.dirty([super.value = '']) : super.dirty();
 
-  static final _lastNameRegex =
-  RegExp(r"[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");
+  static final _lastNameRegex = RegExp(r"[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");
 
   @override
   LastNameValidationError? validator(String value) {
-    return value.isEmpty
-        ? LastNameValidationError.required
-        : _lastNameRegex.hasMatch(value)
-        ? null
-        : LastNameValidationError.invalid;
+    if (value.isEmpty) {
+      return LastNameValidationError.required;
+    }
+    if (!_lastNameRegex.hasMatch(value)) {
+      return LastNameValidationError.invalid;
+    }
+    return null; // Kein Fehler
   }
 }

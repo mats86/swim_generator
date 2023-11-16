@@ -1,9 +1,8 @@
-
 import 'package:formz/formz.dart';
 
 enum EmailValidationError {
-  required('Vorname can\'t be empty'),
-  invalid('Vorname you have entered is not valid.');
+  required('E-Mail darf nicht leer sein.'),
+  invalid('Die eingegebene E-Mail-Adresse ist ungültig.');
 
   final String message;
   const EmailValidationError(this.message);
@@ -11,17 +10,20 @@ enum EmailValidationError {
 
 class Email extends FormzInput<String, EmailValidationError> {
   const Email.pure() : super.pure('');
-  const Email.dirty([String value = '']) : super.dirty(value);
+  const Email.dirty([super.value = '']) : super.dirty();
 
-  static final _emailRegex =
-  RegExp(r"[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");
+  static final _emailRegex = RegExp(
+    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$',
+  );
 
   @override
   EmailValidationError? validator(String value) {
-    return value.isEmpty
-        ? EmailValidationError.required
-        : _emailRegex.hasMatch(value)
-        ? null
-        : EmailValidationError.invalid;
+    if (value.isEmpty) {
+      return EmailValidationError.required;
+    }
+    if (!_emailRegex.hasMatch(value)) {
+      return EmailValidationError.invalid;
+    }
+    return null; // Kein Fehler
   }
 }

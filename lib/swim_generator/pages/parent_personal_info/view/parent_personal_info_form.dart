@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:formz/formz.dart';
 import 'package:swim_generator/swim_generator/cubit/swim_generator_cubit.dart';
+import 'package:user_repository/user_repository.dart';
 
 import '../bloc/parent_personal_info_bloc.dart';
 
@@ -14,10 +15,68 @@ class ParentPersonalInfoForm extends StatefulWidget {
 }
 
 class _ParentPersonalInfoForm extends State<ParentPersonalInfoForm> {
+  late Future<User?> _userFuture;
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _streetController = TextEditingController();
+  final TextEditingController _streetNumberController = TextEditingController();
+  final TextEditingController _zipCodeController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _emailConfirmController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _phoneNumberConfirmController =
+      TextEditingController();
+
+  final FocusNode _titleFocusNode = FocusNode();
+  final FocusNode _firstNameFocusNode = FocusNode();
+  final FocusNode _lastNameFocusNode = FocusNode();
+  final FocusNode _streetFocusNode = FocusNode();
+  final FocusNode _streetNumberFocusNode = FocusNode();
+  final FocusNode _zipCodeFocusNode = FocusNode();
+  final FocusNode _cityFocusNode = FocusNode();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _emailConfirmFocusNode = FocusNode();
+  final FocusNode _phoneNumberFocusNode = FocusNode();
+  final FocusNode _phoneNumberConfirmFocusNode = FocusNode();
+
+  void _addFocusNodeListener(
+    FocusNode currentNode,
+    FocusNode? nextNode,
+    void Function()? onUnfocused,
+  ) {
+    currentNode.addListener(() {
+      if (!currentNode.hasFocus) {
+        if (onUnfocused != null) {
+          onUnfocused();
+        }
+        if (nextNode != null) {
+          FocusScope.of(context).requestFocus(nextNode);
+        }
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     context.read<ParentPersonalInfoBloc>().add(LoadParentTitleOptions());
+    _userFuture =
+        context.read<ParentPersonalInfoBloc>().userRepository.getUser();
+
+    _addFocusNodeListener(_titleFocusNode, _firstNameFocusNode, null);
+    _addFocusNodeListener(_firstNameFocusNode, _lastNameFocusNode, null);
+    _addFocusNodeListener(_lastNameFocusNode, _streetFocusNode, null);
+    _addFocusNodeListener(_streetFocusNode, _streetNumberFocusNode, null);
+    _addFocusNodeListener(_streetNumberFocusNode, _zipCodeFocusNode, null);
+    _addFocusNodeListener(_zipCodeFocusNode, _cityFocusNode, null);
+    _addFocusNodeListener(_cityFocusNode, _emailFocusNode, null);
+    _addFocusNodeListener(_emailFocusNode, _emailConfirmFocusNode, null);
+    _addFocusNodeListener(_emailConfirmFocusNode, _phoneNumberFocusNode, null);
+    _addFocusNodeListener(_phoneNumberFocusNode, _phoneNumberConfirmFocusNode, null);
+    _addFocusNodeListener(_phoneNumberConfirmFocusNode, null, null);
   }
 
   @override
@@ -45,12 +104,16 @@ class _ParentPersonalInfoForm extends State<ParentPersonalInfoForm> {
           _EmailConfirmInput(),
           _PhoneNumberInput(),
           _PhoneNumberConfirmInput(),
-          const SizedBox(height: 16.0,),
+          const SizedBox(
+            height: 16.0,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Expanded(child: _CancelButton()),
-              const SizedBox(width: 8.0,),
+              const SizedBox(
+                width: 8.0,
+              ),
               Expanded(child: _SubmitButton())
             ],
           )
@@ -332,8 +395,7 @@ class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ParentPersonalInfoBloc, ParentPersonalInfoState>(
-        buildWhen: (previous, current) =>
-        previous.email != current.email,
+        buildWhen: (previous, current) => previous.email != current.email,
         builder: (context, state) {
           return TextField(
             key: const Key('ParentPersonalInfoForm_EmailInput_textField'),
@@ -358,9 +420,8 @@ class _EmailInput extends StatelessWidget {
                   ],
                 ),
               ),
-              errorText: state.email.isValid
-                  ? state.email.error?.message
-                  : null,
+              errorText:
+                  state.email.isValid ? state.email.error?.message : null,
             ),
           );
         });
@@ -372,10 +433,11 @@ class _EmailConfirmInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ParentPersonalInfoBloc, ParentPersonalInfoState>(
         buildWhen: (previous, current) =>
-        previous.emailConfirm != current.emailConfirm,
+            previous.emailConfirm != current.emailConfirm,
         builder: (context, state) {
           return TextField(
-            key: const Key('ParentPersonalInfoForm_EmailConfirmInput_textField'),
+            key:
+                const Key('ParentPersonalInfoForm_EmailConfirmInput_textField'),
             onChanged: (emailConfirm) => context
                 .read<ParentPersonalInfoBloc>()
                 .add(ParentEmailConfirmChanged(emailConfirm)),
@@ -489,13 +551,15 @@ class _SubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ParentPersonalInfoBloc, ParentPersonalInfoState>(
-      listenWhen: (previous, current) => previous.submissionStatus != current.submissionStatus,
+      listenWhen: (previous, current) =>
+          previous.submissionStatus != current.submissionStatus,
       listener: (context, state) {
         if (state.submissionStatus.isSuccess) {
           context.read<SwimGeneratorCubit>().stepContinued();
         }
       },
-      buildWhen: (previous, current) => previous.submissionStatus != current.submissionStatus,
+      buildWhen: (previous, current) =>
+          previous.submissionStatus != current.submissionStatus,
       builder: (context, state) {
         final isValid = Formz.validate([
           state.title,
@@ -513,14 +577,16 @@ class _SubmitButton extends StatelessWidget {
         return state.submissionStatus.isInProgress
             ? const CircularProgressIndicator()
             : ElevatedButton(
-          key: const Key('ParentPersonalInfoForm_submitButton_elevatedButton'),
-          style: ElevatedButton.styleFrom(elevation: 0),
-          onPressed: isValid
-              ? () =>
-              context.read<ParentPersonalInfoBloc>().add(FormSubmitted())
-              : null,
-          child: const Text('Weiter'),
-        );
+                key: const Key(
+                    'ParentPersonalInfoForm_submitButton_elevatedButton'),
+                style: ElevatedButton.styleFrom(elevation: 0),
+                onPressed: isValid
+                    ? () => context
+                        .read<ParentPersonalInfoBloc>()
+                        .add(FormSubmitted())
+                    : null,
+                child: const Text('Weiter'),
+              );
       },
     );
   }
@@ -530,16 +596,18 @@ class _CancelButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ParentPersonalInfoBloc, ParentPersonalInfoState>(
-        buildWhen: (previous, current) => previous.submissionStatus != current.submissionStatus,
+        buildWhen: (previous, current) =>
+            previous.submissionStatus != current.submissionStatus,
         builder: (context, state) {
           return state.submissionStatus.isInProgress
               ? const SizedBox.shrink()
               : TextButton(
-            key: const Key('ParentPersonalInfoForm_cancelButton_elevatedButton'),
-            onPressed: () => context.read<SwimGeneratorCubit>().stepCancelled(),
-            child: const Text('Zurück'),
-          );
-        }
-    );
+                  key: const Key(
+                      'ParentPersonalInfoForm_cancelButton_elevatedButton'),
+                  onPressed: () =>
+                      context.read<SwimGeneratorCubit>().stepCancelled(),
+                  child: const Text('Zurück'),
+                );
+        });
   }
 }
