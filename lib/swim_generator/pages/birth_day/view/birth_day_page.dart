@@ -8,7 +8,7 @@ import 'birth_day_form.dart';
 
 
 class BirthDayPage extends StatelessWidget {
-  const BirthDayPage({Key? key}) : super(key: key);
+  const BirthDayPage({super.key});
 
   static Route route() {
     return MaterialPageRoute<void>(

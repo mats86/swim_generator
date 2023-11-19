@@ -19,7 +19,7 @@ extension Explanation on SwimPoolModelsValidationError {
 
 class SwimPoolModels extends FormzInput<List<SwimPool>, SwimPoolModelsValidationError> {
   const SwimPoolModels.pure() : super.pure(const []);
-  const SwimPoolModels.dirty([List<SwimPool> value = const []]) : super.dirty(value);
+  const SwimPoolModels.dirty([super.value = const []]) : super.dirty();
 
   @override
   SwimPoolModelsValidationError? validator(List<SwimPool> value) {

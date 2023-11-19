@@ -6,7 +6,7 @@ import '../bloc/kind_personal_info_bloc.dart';
 import 'kind_personal_info_form.dart';
 
 class KindPersonalInfoPage extends StatelessWidget {
-  const KindPersonalInfoPage({Key? key}) : super(key: key);
+  const KindPersonalInfoPage({super.key});
 
   static Route route() {
     return MaterialPageRoute<void>(

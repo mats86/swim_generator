@@ -6,7 +6,7 @@ import '../../swim_course/view/swim_course_form.dart';
 import '../bloc/swim_course_bloc.dart';
 
 class SwimCoursePage extends StatelessWidget {
-  const SwimCoursePage({Key? key}) : super(key: key);
+  const SwimCoursePage({super.key});
 
   static Route route() {
     return MaterialPageRoute<void>(

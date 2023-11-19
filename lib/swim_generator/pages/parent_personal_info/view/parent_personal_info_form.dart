@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:formz/formz.dart';
@@ -75,7 +76,8 @@ class _ParentPersonalInfoForm extends State<ParentPersonalInfoForm> {
     _addFocusNodeListener(_cityFocusNode, _emailFocusNode, null);
     _addFocusNodeListener(_emailFocusNode, _emailConfirmFocusNode, null);
     _addFocusNodeListener(_emailConfirmFocusNode, _phoneNumberFocusNode, null);
-    _addFocusNodeListener(_phoneNumberFocusNode, _phoneNumberConfirmFocusNode, null);
+    _addFocusNodeListener(
+        _phoneNumberFocusNode, _phoneNumberConfirmFocusNode, null);
     _addFocusNodeListener(_phoneNumberConfirmFocusNode, null, null);
   }
 
@@ -322,36 +324,44 @@ class _ZipCodeInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ParentPersonalInfoBloc, ParentPersonalInfoState>(
-        buildWhen: (previous, current) => previous.zipCode != current.zipCode,
-        builder: (context, state) {
-          return TextField(
-            key: const Key('ParentPersonalInfoForm_ZipCodeInput_textField'),
-            onChanged: (zipCode) => context
-                .read<ParentPersonalInfoBloc>()
-                .add(ParentZipCodeChanged(zipCode)),
-            decoration: InputDecoration(
-              label: const FittedBox(
-                fit: BoxFit.fitWidth,
-                child: Row(
-                  children: [
-                    Text(
-                      'PLZ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(3.0),
-                    ),
-                    Text('*',
-                        style: TextStyle(
-                            color: Colors.red, fontWeight: FontWeight.bold)),
-                  ],
-                ),
+      buildWhen: (previous, current) => previous.zipCode != current.zipCode,
+      builder: (context, state) {
+        return TextField(
+          key: const Key('ParentPersonalInfoForm_ZipCodeInput_textField'),
+          onChanged: (zipCode) => context
+              .read<ParentPersonalInfoBloc>()
+              .add(ParentZipCodeChanged(zipCode)),
+          keyboardType: TextInputType.number,
+          maxLength: 5,
+          // Begrenzt die Eingabe auf 5 Zeichen
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          // Erlaubt nur Zahlen
+          decoration: InputDecoration(
+            counterText: "",
+            label: const FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Row(
+                children: [
+                  Text(
+                    'PLZ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(3.0),
+                  ),
+                  Text('*',
+                      style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold)),
+                ],
               ),
-              errorText:
-                  state.zipCode.isValid ? state.zipCode.error?.message : null,
             ),
-          );
-        });
+            errorText: !state.zipCode.isPure && state.zipCode.isNotValid
+                ? state.zipCode.error?.message
+                : null,
+          ),
+        );
+      },
+    );
   }
 }
 

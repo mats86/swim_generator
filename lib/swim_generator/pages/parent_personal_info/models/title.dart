@@ -10,7 +10,7 @@ enum TitleValidationError {
 
 class TitleModels extends FormzInput<String, TitleValidationError> {
   const TitleModels.pure() : super.pure('');
-  const TitleModels.dirty([String value = '']) : super.dirty(value);
+  const TitleModels.dirty([super.value = '']) : super.dirty();
 
   @override
   TitleValidationError? validator(String value) {

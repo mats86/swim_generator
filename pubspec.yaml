@@ -37,10 +37,13 @@ dependencies:
   flutter_hooks: ^0.20.3
   flutter_datetime_picker_plus: ^2.1.0
   flutter_spinkit: ^5.2.0
+  universal_html: ^2.2.4
   user_repository:
     git: https://github.com/mats86/user_repository.git
   flutter:
     sdk: flutter
+  js: ^0.6.7 # Stellen Sie sicher, dass Sie die neueste Version verwenden
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -70,7 +73,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+assets:
+  - assets/images/Vector15.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

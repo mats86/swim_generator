@@ -8,7 +8,7 @@ import '../cubit/swim_generator_cubit.dart';
 import '../pages/pages.dart';
 
 class SwimGeneratorStepper extends StatelessWidget {
-  const SwimGeneratorStepper({Key? key}) : super(key: key);
+  const SwimGeneratorStepper({super.key});
 
   @override
   Widget build(BuildContext context) {

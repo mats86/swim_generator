@@ -11,7 +11,7 @@ enum EmailConfirmValidationError {
 
 class EmailConfirm extends FormzInput<String, EmailConfirmValidationError> {
   const EmailConfirm.pure() : super.pure('');
-  const EmailConfirm.dirty([String value = '']) : super.dirty(value);
+  const EmailConfirm.dirty([super.value = '']) : super.dirty();
 
   static final _emailConfirmRegex =
   RegExp(r"[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");

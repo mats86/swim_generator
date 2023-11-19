@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:user_repository/user_repository.dart';
 
 class ResultForm extends StatelessWidget {
-  const ResultForm({Key? key}) : super(key: key);
+  const ResultForm({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,8 @@
-
 import 'package:formz/formz.dart';
 
 enum ZipCodeValidationError {
-  required('Vorname can\'t be empty'),
-  invalid('Vorname you have entered is not valid.');
+  required('Eine Postleitzahl ist erforderlich.'),
+  invalid('Die Postleitzahl muss aus 5 Zahlen bestehen.');
 
   final String message;
   const ZipCodeValidationError(this.message);
@@ -11,17 +10,17 @@ enum ZipCodeValidationError {
 
 class ZipCode extends FormzInput<String, ZipCodeValidationError> {
   const ZipCode.pure() : super.pure('');
-  const ZipCode.dirty([String value = '']) : super.dirty(value);
-
-  static final _zipCodeRegex =
-  RegExp(r"[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");
+  const ZipCode.dirty([super.value = '']) : super.dirty();
 
   @override
   ZipCodeValidationError? validator(String value) {
-    return value.isEmpty
-        ? ZipCodeValidationError.required
-        : _zipCodeRegex.hasMatch(value)
-        ? null
-        : ZipCodeValidationError.invalid;
+    if (value.isEmpty) {
+      return ZipCodeValidationError.required;
+    }
+    // Überprüfen, ob die Postleitzahl genau 5 Zahlen enthält
+    if (!RegExp(r'^\d{5}$').hasMatch(value)) {
+      return ZipCodeValidationError.invalid;
+    }
+    return null; // Kein Fehler
   }
 }

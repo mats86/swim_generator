@@ -10,7 +10,7 @@ enum SwimCourseValidationError {
 
 class SwimCourseModels extends FormzInput<String, SwimCourseValidationError> {
   const SwimCourseModels.pure() : super.pure('');
-  const SwimCourseModels.dirty([String value = '']) : super.dirty(value);
+  const SwimCourseModels.dirty([super.value = '']) : super.dirty();
 
   @override
   SwimCourseValidationError? validator(String value) {

@@ -5,7 +5,7 @@ import '../bloc/swim_pool_bloc.dart';
 import 'swim_pool_form.dart';
 
 class SwimPoolPage extends StatelessWidget {
-  const SwimPoolPage({Key? key}) : super(key: key);
+  const SwimPoolPage({super.key});
 
   static Route route() {
     return MaterialPageRoute<void>(

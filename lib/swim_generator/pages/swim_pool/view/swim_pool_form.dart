@@ -8,7 +8,7 @@ import '../bloc/swim_pool_bloc.dart';
 import '../models/swim_pool_models.dart';
 
 class SwimPoolForm extends StatefulWidget {
-  const SwimPoolForm({Key? key}) : super(key: key);
+  const SwimPoolForm({super.key});
 
   @override
   State<SwimPoolForm> createState() => _SwimPoolForm();

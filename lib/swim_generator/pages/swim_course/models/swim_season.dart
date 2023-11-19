@@ -10,7 +10,7 @@ enum SwimSeasonValidationError {
 
 class SwimSeasonModels extends FormzInput<String, SwimSeasonValidationError> {
   const SwimSeasonModels.pure() : super.pure('');
-  const SwimSeasonModels.dirty([String value = '']) : super.dirty(value);
+  const SwimSeasonModels.dirty([super.value = '']) : super.dirty();
 
   @override
   SwimSeasonValidationError? validator(String value) {

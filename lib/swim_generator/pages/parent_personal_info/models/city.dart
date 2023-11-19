@@ -11,7 +11,7 @@ enum CityValidationError {
 
 class City extends FormzInput<String, CityValidationError> {
   const City.pure() : super.pure('');
-  const City.dirty([String value = '']) : super.dirty(value);
+  const City.dirty([super.value = '']) : super.dirty();
 
   static final _cityRegex =
   RegExp(r"[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");

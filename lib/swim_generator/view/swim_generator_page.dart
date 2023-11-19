@@ -6,7 +6,8 @@ import 'package:user_repository/user_repository.dart';
 import '../cubit/swim_generator_cubit.dart';
 
 class SwimGeneratorPage extends StatelessWidget {
-  const SwimGeneratorPage({Key? key}) : super(key: key);
+  final String title;
+  const SwimGeneratorPage({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,14 @@ class SwimGeneratorPage extends StatelessWidget {
       create: (_) => UserRepository(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Schwimmkurs Generator'),
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text('Schwimmkurs Konfigurator'), // Erste Zeile
+              Text(title), // Zweite Zeile
+            ],
+          ),
           centerTitle: true,
         ),
         body: BlocProvider<SwimGeneratorCubit>(

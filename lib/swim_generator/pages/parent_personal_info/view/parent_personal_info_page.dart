@@ -6,7 +6,7 @@ import 'parent_personal_info_form.dart';
 import '../bloc/parent_personal_info_bloc.dart';
 
 class ParentPersonalInfoPage extends StatelessWidget {
-  const ParentPersonalInfoPage({Key? key}) : super(key: key);
+  const ParentPersonalInfoPage({super.key});
 
   static Route route() {
     return MaterialPageRoute<void>(

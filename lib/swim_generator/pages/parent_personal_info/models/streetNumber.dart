@@ -11,7 +11,7 @@ enum StreetNumberValidationError {
 
 class StreetNumber extends FormzInput<String, StreetNumberValidationError> {
   const StreetNumber.pure() : super.pure('');
-  const StreetNumber.dirty([String value = '']) : super.dirty(value);
+  const StreetNumber.dirty([super.value = '']) : super.dirty();
 
   static final _streetNumberRegex =
   RegExp(r"[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");

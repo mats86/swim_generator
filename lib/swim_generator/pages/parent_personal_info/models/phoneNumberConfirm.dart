@@ -11,7 +11,7 @@ enum PhoneNumberConfirmValidationError {
 
 class PhoneNumberConfirm extends FormzInput<String, PhoneNumberConfirmValidationError> {
   const PhoneNumberConfirm.pure() : super.pure('');
-  const PhoneNumberConfirm.dirty([String value = '']) : super.dirty(value);
+  const PhoneNumberConfirm.dirty([super.value = '']) : super.dirty();
 
   static final _phoneNumberConfirmRegex =
   RegExp(r"[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");

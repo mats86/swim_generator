@@ -8,7 +8,7 @@ import 'package:user_repository/user_repository.dart';
 import '../bloc/swim_course_bloc.dart';
 
 class SwimCourseForm extends StatefulWidget {
-  const SwimCourseForm({Key? key}) : super(key: key);
+  const SwimCourseForm({super.key});
 
   @override
   State<SwimCourseForm> createState() => _SwimCourseForm();
